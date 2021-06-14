@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace WebApp.Identity
@@ -37,8 +38,8 @@ namespace WebApp.Identity
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             var connectionString = @"Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=Identity_Curso;Data Source=DESKTOP-TUDNH08\\SQLEXPRESS";
-            services.AddDbContext<IdentityDbContext>(opt => opt.UseSqlServer(connectionString));
-
+            var migrationAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+            services.AddDbContext<IdentityDbContext>(opt => opt.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationAssembly)));
 
             services.AddIdentityCore<IdentityUser>(options => { });
             services.AddScoped<IUserStore<IdentityUser>, 
