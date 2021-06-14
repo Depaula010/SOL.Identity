@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -34,8 +36,14 @@ namespace WebApp.Identity
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddIdentityCore<MyUser>(options => { });
-            services.AddScoped<IUserStore<MyUser>, MyUserStore>();
+            var connectionString = @"Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=Identity_Curso;Data Source=DESKTOP-TUDNH08\\SQLEXPRESS";
+            services.AddDbContext<IdentityDbContext>(opt => opt.UseSqlServer(connectionString));
+
+
+            services.AddIdentityCore<IdentityUser>(options => { });
+            services.AddScoped<IUserStore<IdentityUser>, 
+                UserOnlyStore<IdentityUser,
+                IdentityDbContext>>();
 
             services.AddAuthentication("cookies").AddCookie("cookies", options => options.LoginPath = "/Home/Login");
         }
