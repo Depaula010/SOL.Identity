@@ -37,14 +37,15 @@ namespace WebApp.Identity
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            var connectionString = @"Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=Identity_Curso;Data Source=DESKTOP-TUDNH08\\SQLEXPRESS";
+            var connectionString = @"Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=Identity_Curso;Data Source=DESKTOP-TUDNH08\SQLEXPRESS";
             var migrationAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-            services.AddDbContext<IdentityDbContext>(opt => opt.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationAssembly)));
 
-            services.AddIdentityCore<IdentityUser>(options => { });
-            services.AddScoped<IUserStore<IdentityUser>, 
-                UserOnlyStore<IdentityUser,
-                IdentityDbContext>>();
+            services.AddDbContext<MyUserDbContext>(opt => opt.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationAssembly)));
+
+            services.AddIdentityCore<MyUser>(options => { });
+            services.AddScoped<IUserStore<MyUser>, 
+                UserOnlyStore<MyUser,
+                MyUserDbContext>>();
 
             services.AddAuthentication("cookies").AddCookie("cookies", options => options.LoginPath = "/Home/Login");
         }
